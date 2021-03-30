@@ -2,8 +2,9 @@
   "name": "@tsa-tools/cli",
   "version": "0.0.0-managed-by-semantic-release",
   "description": "Run time-series analysis.",
+  "main": "./dist/index.js",
   "bin": {
-    "tsa": "./dist/index.js"
+    "tsa": "./dist/cli.js"
   },
   "types": "./dist/index.d.ts",
   "files": [
