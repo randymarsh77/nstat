@@ -39,7 +39,7 @@
     "typescript-eslint": "^0.0.1-alpha.0"
   },
   "dependencies": {
-    "@simple-cli/base": "^0.0.4",
+    "@simple-cli/base": "^0.0.5",
     "axios": "^0.21.1",
     "moment": "^2.29.1",
     "timeseries-analysis": "^1.0.12",
