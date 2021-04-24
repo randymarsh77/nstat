@@ -411,10 +411,10 @@
     lodash "^4.17.4"
     read-pkg-up "^7.0.0"
 
-"@simple-cli/base@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@simple-cli/base/-/base-1.1.0.tgz#2cc9feabb6bad09f91cbc692773a251d90ce5785"
-  integrity sha512-RT5lxUwb3YxrNGB70nJ12JqnFq5/icoWmnmPBC+mXb7wS/Z0w3ktY9L8JTaAuIXm1RVRcyWPxdRi7YFvaoBeJw==
+"@simple-cli/base@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@simple-cli/base/-/base-1.1.1.tgz#76a6858f56c20b7322bafe13f382f1e7a2c08516"
+  integrity sha512-R1DjUKcaEhDwz8fagWTz/7B1Scqh1GRRI0DNqIvgHRCp7EyTlGaWOoZqiHkqXQFw0UjuDiZNrEInW0eIwOPZPA==
   dependencies:
     command-line-args "^5.1.1"
     command-line-commands "^3.0.2"
