@@ -22,6 +22,11 @@ const rangeOptions = {
 			description:
 				'Interval between each data point. Defaults to the larger of 1000 points total, or 30',
 		},
+		{
+			name: 'aggregate',
+			type: Boolean,
+			description: 'When processing multiple series, process them all as one series.',
+		},
 	],
 	validate: () => true,
 	populateOptions: () => ({}),
@@ -31,6 +36,7 @@ interface ITSAOptions {
 	since: string;
 	until: string;
 	step: string;
+	aggregate: boolean;
 }
 
 const name = 'null';
@@ -55,7 +61,7 @@ export const tsa: IPluggableCommand<ITSAOptions, ITSAPluginArgs, TSAPluginResult
 	}),
 	validate: () => rangeOptions.validate(),
 	execute: async ({ options }) => {
-		const { since, until, step, plugin } = options;
+		const { since, until, step, plugin, aggregate } = options;
 		const untilMS =
 			!until || until.toLowerCase() === 'now'
 				? Date.now()
@@ -69,7 +75,12 @@ export const tsa: IPluggableCommand<ITSAOptions, ITSAPluginArgs, TSAPluginResult
 		);
 
 		if (Array.isArray(result)) {
-			const t = new timeseries.main(result); // eslint-disable-line
+			const t = new timeseries.main(result);
+			console.log(`Min: ${t.min()} Max: ${t.max()} Mean: ${t.mean()}`);
+		} else if (aggregate) {
+			const { data } = result as ITSAPluginResult;
+			const series = Object.keys(data).flatMap((k) => data[k]);
+			const t = new timeseries.main(series);
 			console.log(`Min: ${t.min()} Max: ${t.max()} Mean: ${t.mean()}`);
 		} else {
 			const { data } = result as ITSAPluginResult;
