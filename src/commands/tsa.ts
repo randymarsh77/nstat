@@ -1,7 +1,7 @@
 import timeseries from 'timeseries-analysis';
 import timestring from 'timestring';
 import { IPluggableCommand } from '@simple-cli/base';
-import { ITSAPluginArgs, TSAPluginResult } from '../types';
+import { ITSAPluginArgs, TSAPluginResult, ITSAPluginResult } from '../types';
 
 const rangeOptions = {
 	options: [
@@ -61,16 +61,38 @@ export const tsa: IPluggableCommand<ITSAOptions, ITSAPluginArgs, TSAPluginResult
 				? Date.now()
 				: Date.now() - timestring(until, 'ms', {});
 		const sinceMS = untilMS - ((!since && 3600000) || timestring(since, 'ms', {}));
-		console.log(`${sinceMS} - ${untilMS}`);
 		const resolvedStep = Math.max(30, (step && parseInt(step, 10)) || (untilMS - sinceMS) / 1000);
 
-		const data = await plugin.execute(
+		const result = await plugin.execute(
 			{ start: sinceMS, end: untilMS, step: resolvedStep },
 			options
 		);
 
-		const t = new timeseries.main(data); // eslint-disable-line
-		console.log(`Min: ${t.min()} Max: ${t.max()} Mean: ${t.mean()}`);
+		if (Array.isArray(result)) {
+			const t = new timeseries.main(result); // eslint-disable-line
+			console.log(`Min: ${t.min()} Max: ${t.max()} Mean: ${t.mean()}`);
+		} else {
+			const { data } = result as ITSAPluginResult;
+			const processed = Object.keys(data).map((label) => {
+				const series = new timeseries.main(data[label]);
+				const min = series.min() as number;
+				const max = series.max() as number;
+				const mean = series.mean() as number;
+				return {
+					label,
+					series,
+					min,
+					max,
+					mean,
+				};
+			});
+
+			processed.sort((a, b) => a.mean - b.mean);
+
+			processed.forEach(({ label, min, max, mean }) => {
+				console.log(`${label}: Min: ${min} Max: ${max} Mean: ${mean}`);
+			});
+		}
 
 		return { code: 0 };
 	},
