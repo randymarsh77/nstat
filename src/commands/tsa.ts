@@ -42,6 +42,10 @@ interface ITSAOptions {
 const name = 'null';
 const summary = 'Runs a time-series analysis.';
 
+function toDisplay(n: number) {
+	return parseFloat(n.toFixed(2));
+}
+
 export const tsa: IPluggableCommand<ITSAOptions, ITSAPluginArgs, TSAPluginResult> = {
 	name,
 	summary,
@@ -100,9 +104,12 @@ export const tsa: IPluggableCommand<ITSAOptions, ITSAPluginArgs, TSAPluginResult
 
 			processed.sort((a, b) => a.mean - b.mean);
 
-			processed.forEach(({ label, min, max, mean }) => {
-				console.log(`${label}: Min: ${min} Max: ${max} Mean: ${mean}`);
-			});
+			const display = processed.reduce((acc, v) => {
+				const { label, min, max, mean } = v;
+				acc[label] = { min: toDisplay(min), max: toDisplay(max), mean: toDisplay(mean) };
+				return acc;
+			}, {} as any);
+			console.table(display);
 		}
 
 		return { code: 0 };
