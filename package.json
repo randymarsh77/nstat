@@ -13,7 +13,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./src --ext .ts",
-    "build": "rimraf dist && yarn lint && tsc"
+    "build": "rimraf dist && yarn lint && tsc && chmod +x dist/cli.js",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -25,21 +26,17 @@
     "access": "public"
   },
   "devDependencies": {
-    "@commitlint/cli": "^12.1.1",
-    "@types/node": "^14.14.37",
+    "@commitlint/cli": "^17.4.4",
+    "@types/node": "^18.15.0",
     "@types/timestring": "^6.0.0",
-    "@typescript-eslint/eslint-plugin": "^4.19.0",
-    "@typescript-eslint/parser": "^4.19.0",
     "commitlint-config-faithlife": "^1.0.0",
-    "eslint": "^7.22.0",
-    "eslint-config-faithlife": "^8.1.0",
-    "eslint-plugin-import": "^2.22.1",
-    "husky": "^6.0.0",
-    "prettier": "^2.2.1",
-    "rimraf": "^2.6.1",
-    "semantic-release": "^17.4.2",
-    "typescript": "^4.2.3",
-    "typescript-eslint": "^0.0.1-alpha.0"
+    "eslint": "^8.36.0",
+    "eslint-config-faithlife": "^10.0.0-next.1",
+    "husky": "^8.0.3",
+    "prettier": "^2.8.4",
+    "rimraf": "^4.4.0",
+    "semantic-release": "^20.1.1",
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "@simple-cli/base": "^1.1.1",
