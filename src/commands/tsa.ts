@@ -3,6 +3,17 @@ import timestring from 'timestring';
 import { IPluggableCommand } from '@simple-cli/base';
 import { ITSAPluginArgs, TSAPluginResult, ITSAPluginResult } from '../types';
 
+enum SortType {
+	min = 'min',
+	max = 'max',
+	mean = 'mean',
+}
+
+enum SortDirection {
+	asc = 'asc',
+	desc = 'desc',
+}
+
 const rangeOptions = {
 	options: [
 		{
@@ -27,6 +38,16 @@ const rangeOptions = {
 			type: Boolean,
 			description: 'When processing multiple series, process them all as one series.',
 		},
+		{
+			name: 'sort-by',
+			type: String,
+			description: 'Sort output by this stat. One of [min|max|mean].',
+		},
+		{
+			name: 'sort-direction',
+			type: String,
+			description: 'Sort output in this direction. One of [asc|desc].',
+		},
 	],
 	validate: () => true,
 	populateOptions: () => ({}),
@@ -37,6 +58,22 @@ interface ITSAOptions {
 	until: string;
 	step: string;
 	aggregate: boolean;
+
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	'sort-by': SortType;
+
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	'sort-direction': SortDirection;
+}
+
+interface IDataPoint {
+	min: number;
+	max: number;
+	mean: number;
+}
+
+function getSortableStat(data: IDataPoint, sortType: SortType) {
+	return data[sortType];
 }
 
 const name = 'null';
@@ -102,13 +139,19 @@ export const tsa: IPluggableCommand<ITSAOptions, ITSAPluginArgs, TSAPluginResult
 				};
 			});
 
-			processed.sort((a, b) => a.mean - b.mean);
+			const sortBy = options['sort-by'] ?? SortType.mean;
+			const sortDirection = options['sort-direction'] ?? SortDirection.desc;
+			processed.sort((a, b) => {
+				const low = sortDirection === SortDirection.asc ? a : b;
+				const high = sortDirection === SortDirection.asc ? b : a;
+				return getSortableStat(low, sortBy) - getSortableStat(high, sortBy);
+			});
 
-			const display = processed.reduce((acc, v) => {
+			const display = processed.reduce<{ [key: string]: IDataPoint }>((acc, v) => {
 				const { label, min, max, mean } = v;
 				acc[label] = { min: toDisplay(min), max: toDisplay(max), mean: toDisplay(mean) };
 				return acc;
-			}, {} as any);
+			}, {});
 			console.table(display);
 		}
 
